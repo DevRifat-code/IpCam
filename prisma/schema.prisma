@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Room {
+  id               String         @id
+  title            String
+  obsLayout        String         @default("grid") @map("obs_layout")
+  activeSoloPeerId String?        @map("active_solo_peer_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  devices          Device[]
+  cameraPresets    CameraPreset[]
+
+  @@map("rooms")
+}
+
+model Device {
+  id             String         @id @map("device_id")
+  roomId         String         @map("room_id")
+  deviceName     String         @map("device_name")
+  isMobile       Boolean        @default(true) @map("is_mobile")
+  activePresetId String?        @map("active_preset_id")
+  lastSettings   Json?          @default("{}") @map("last_settings")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  room           Room           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  cameraPresets  CameraPreset[]
+
+  @@map("devices")
+}
+
+model CameraPreset {
+  id                   String   @id @default(uuid())
+  name                 String
+  description          String?
+  zoom                 Float    @default(1.0)
+  exposureCompensation Float    @default(0.0) @map("exposure_compensation")
+  focusMode            String   @default("auto") @map("focus_mode")
+  focusDistance        Int?     @map("focus_distance")
+  torch                Boolean  @default(false)
+  resolution           String?  @default("1080p")
+  isCustom             Boolean  @default(true) @map("is_custom")
+  roomId               String   @map("room_id")
+  deviceId             String?  @map("device_id")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  room   Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  device Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@map("camera_presets")
+}

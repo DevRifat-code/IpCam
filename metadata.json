@@ -1,0 +1,11 @@
+{
+  "name": "StreamLink Pro",
+  "description": "Professional Mobile-to-PC Virtual Camera & WebRTC Streaming Platform",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
